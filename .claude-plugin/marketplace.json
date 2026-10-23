@@ -1,0 +1,17 @@
+{
+  "name": "webnovel-studio",
+  "owner": { "name": "Reedo" },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Web novel studio for agents: plan a new series from Korean, English and Japanese market evidence, write and check chapters, run a reserve-based serial, and translate for Royal Road, Wattpad, Webnovel and Scribble Hub. Three small checkers included."
+  },
+  "plugins": [
+    {
+      "name": "webnovel-studio",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/webnovel-studio"],
+      "description": "Plan, write, check and serialize a web novel. Cross-market scenario scoring, golden-three design, chapter loop with fact lock, reserve chapters, weekly reader-drop review, English translation serial."
+    }
+  ]
+}

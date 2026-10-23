@@ -1,0 +1,1 @@
+{"episodes":[{"no":1,"file":"ch-ok.txt","title":"첫 점검","posted":true,"postedAt":"2026-01-01 20:00","viewer":"https://example.com/1","summary":["a","b","c"],"plants":["F-001 | 단서"],"payoffs":[]},{"no":2,"file":"ch-prev.txt","title":"앞 화","posted":false,"buffer":true,"summary":["a","b","c"],"plants":[],"payoffs":["F-001 회수"]}]}
