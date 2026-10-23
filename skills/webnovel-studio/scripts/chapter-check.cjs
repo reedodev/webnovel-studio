@@ -74,6 +74,15 @@ if (ko) {
   sents.forEach((s) => { const e = endOf(s); freq[e] = (freq[e] || 0) + 1; });
   const top = Object.entries(freq).sort((a, b) => b[1] - a[1])[0];
   if (top && sents.length >= 20) out.push(`가장 많은 끝맺음 "${top[0]}" ${(100 * top[1] / sents.length).toFixed(0)}%`);
+  // 4-0. 문장 호흡(2026-10-23 사용자 지적 반영): 짧은 단문의 나열을 잡는다. 지문 문장만 센다.
+  if (sents.length >= 40) {
+    const lens = sents.map((s) => s.replace(/\s/g, '').length);
+    const avgS = lens.reduce((a, b) => a + b, 0) / lens.length;
+    const shortP = lens.filter((n) => n <= 15).length / lens.length;
+    const linked = sents.filter((s) => /,|(고|며|면서|는데|지만|아서|어서|다가|려고|도록|던|는|은|ㄴ|ᆫ) /.test(s)).length / sents.length;
+    out.push(`문장 호흡: 평균 ${avgS.toFixed(1)}자, 15자 이하 ${(100 * shortP).toFixed(0)}%, 이어 쓴 문장 ${(100 * linked).toFixed(0)}%`);
+    if (avgS < 20 || shortP > 0.4) say('WARN', `문장 호흡: 짧게 끝나는 문장이 많음(평균 ${avgS.toFixed(1)}자, 15자 이하 ${(100 * shortP).toFixed(0)}%). 관형절·연결어미로 이유와 결과를 이어 쓰는 문장을 늘릴 것`);
+  }
   if (top && sents.length >= 20 && top[1] / sents.length > 0.5) say('WARN', `끝맺음 "${top[0]}" 가 절반을 넘음`);
 }
 
@@ -135,7 +144,7 @@ for (const pf of opt.prev) {
 // 7. 금지어
 for (const b of opt.ban) { const n = body.split(b).length - 1; if (n) say('WARN', `금지어 "${b}" ${n}회`); }
 
-// 7-1. 용어 표기 일관성: --terms 파일(JSON 배열 [["마법진","봉인진"],["검은문","검은 문"]])의 한 묶음 안 표기가 한 화에 둔 이상 섞여 있으면 WARN
+// 7-1. 용어 표기 일관성: --terms 파일(JSON 배열 [["귀혼문","귀혼의 문"],["마법진","봉인진"]])의 한 묶음 안 표기가 한 화에 둔 이상 섞여 있으면 WARN
 if (opt.terms) {
   try {
     const groups = JSON.parse(fs.readFileSync(opt.terms, 'utf8').replace(/^\uFEFF/, ''));

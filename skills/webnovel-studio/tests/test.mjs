@@ -19,6 +19,8 @@ r = run('chapter-check.cjs', [fx('ch-short.txt'), '--min', '200']);
 check('chapter too short: FAIL exit 1', r.code === 1 && /\[FAIL\]/.test(r.out), r.out);
 r = run('chapter-check.cjs', [fx('ch-bad.txt'), '--min', '100']);
 check('bad prose signals are flagged', /감정 텔링/.test(r.out) && /빈 수식어/.test(r.out) && /요약형 마무리/.test(r.out), r.out);
+r = run('chapter-check.cjs', [fx('ch-staccato.txt'), '--min', '10']);
+check('staccato short sentences are flagged', /문장 호흡/.test(r.out) && /\[WARN\]/.test(r.out), r.out);
 r = run('chapter-check.cjs', [fx('ch-terms.txt'), '--min', '10', '--terms', fx('terms.json')]);
 check('mixed term spelling is flagged', /용어 표기가 섞임/.test(r.out), r.out);
 r = run('chapter-check.cjs', [fx('en-ok.txt'), '--lang', 'en', '--min', '60', '--skip', '2']);
