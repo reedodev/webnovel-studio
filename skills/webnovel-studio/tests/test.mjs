@@ -29,6 +29,9 @@ check('ledger ok: exit 0', r.code === 0 && !/\[(WARN|FAIL)\]/.test(r.out), r.out
 r = run('ledger-check.cjs', [fx('ledger-bad.json'), '--dir', here + '/fixtures']);
 check('ledger bad: number gap is FAIL', r.code === 1 && /번호 빈틈/.test(r.out), r.out);
 
+r = run('ledger-check.cjs', [fx('ledger-simple-ok.json'), '--reserve', '1', '--dir', here + '/fixtures']);
+check('ledger (lastPublished/ready format): exit 0 and platform gap flagged', r.code === 0 && /lastPublished\/ready 방식/.test(r.out) && /플랫폼 naver/.test(r.out), r.out);
+
 r = run('scenario-score.cjs', [fx('candidates.json')]);
 const lines = r.out.split('\n');
 const iA = lines.findIndex((l) => /1순위\s+A/.test(l));

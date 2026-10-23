@@ -18,6 +18,26 @@ const eps = Array.isArray(data) ? data : (data.episodes || []);
 const out = []; let fail = 0, warn = 0;
 const say = (lv, m) => { out.push(`[${lv}] ${m}`); if (lv === 'FAIL') fail++; else warn++; };
 
+// 두 번째 형식: { lastPublished, totalPlanned, ready: {"50":"final/ep50.md"}, munpia:{lastPublished}, naver:{lastPublished} }
+if (!eps.length && !Array.isArray(data) && Number.isInteger(data.lastPublished)) {
+  const o2 = []; let w2 = 0;
+  const say2 = (m) => { o2.push('[WARN] ' + m); w2++; };
+  const last = data.lastPublished;
+  const readyKeys = Object.keys(data.ready || {}).map(Number).filter(Number.isInteger).sort((a, b) => a - b);
+  o2.unshift('형식: lastPublished/ready 방식. 마지막 공개 ' + last + '화' + (Number.isInteger(data.totalPlanned) ? ' / 계획 ' + data.totalPlanned + '화(' + Math.round(100 * last / data.totalPlanned) + '%)' : '') + ', 대기 ' + readyKeys.length + '화 [' + readyKeys.join(', ') + ']');
+  if (readyKeys.length && readyKeys[0] !== last + 1) say2('대기 첫 번호가 ' + (last + 1) + '화여야 하는데 ' + readyKeys[0] + '화');
+  for (let i = 1; i < readyKeys.length; i++) if (readyKeys[i] !== readyKeys[i - 1] + 1) say2('대기 번호가 이어지지 않음: ' + readyKeys[i - 1] + ' 다음 ' + readyKeys[i]);
+  for (const k of readyKeys) { const rel = data.ready[String(k)]; if (typeof rel === 'string' && !fs.existsSync(path.join(dir, rel))) say2('대기 ' + k + '화 원고 파일 없음: ' + rel); }
+  for (const [k, v] of Object.entries(data)) {
+    if (v && typeof v === 'object' && !Array.isArray(v) && Number.isInteger(v.lastPublished) && v.lastPublished !== last) say2('플랫폼 ' + k + ' 마지막 공개 ' + v.lastPublished + '화가 대표값 ' + last + '화와 다름(의도한 차이인지 확인)');
+  }
+  const lastFile = ['final/ep' + String(last).padStart(2, '0') + '.md', 'final/ep' + last + '.md', 'ep' + String(last).padStart(3, '0') + '.txt'].find((p) => fs.existsSync(path.join(dir, p)));
+  if (!lastFile) say2('마지막 공개 ' + last + '화 원고 파일을 final/ 에서 찾지 못함(다른 폴더로 옮겼다면 무시)');
+  if (readyKeys.length < reserveTarget) say2('비축분 ' + readyKeys.length + '화 < 목표 ' + reserveTarget + '화');
+  o2.push('--- 결과: FAIL 0, WARN ' + w2 + '. 기록 형식만 점검함(게시 여부는 사이트 목록으로 대조해야 함).');
+  console.log(o2.join('\n'));
+  process.exit(0);
+}
 if (!eps.length) { console.log('[FAIL] episodes 가 비어 있음'); process.exit(1); }
 const nos = eps.map((e) => e.no);
 const seen = new Set();
