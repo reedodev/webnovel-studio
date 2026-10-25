@@ -41,6 +41,7 @@ description: "웹소설 신작 기획, 설정집, 황금 3화, 회차 집필, �
 ## 작업별로 읽을 문서 (필요한 한 줄만 읽는다)
 | 작업 | 읽을 문서 |
 |---|---|
+| 신작 기획 전에 작가에게 질문을 던져 취향·금지선·결정을 확정할 때(작가가 직접 요청한 경우만) | `references/grill-session.md` |
 | 영문·한국·일본 시장을 교차해 최적의 신작 시나리오를 고를 때, 기획 검수 | `references/scenario-synthesis.md` (시장 자료 `references/markets-learned.md`, 겹침 기준 `references/works-registry.md`, 계산 `scripts/scenario-score.cjs`) |
 | 상위 작품 조사, 장르와 분량 정하기 | `references/market-scan.md` |
 | 제목, 소개글, 태그, 유입이 적을 때 | `references/packaging.md` |
